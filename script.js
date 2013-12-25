@@ -78,7 +78,7 @@ function step1 () {
 
         // 自分の音声のボリュームをコントロールする
         var mediaStreamSource = audioContext.createMediaStreamSource(stream);
-        gainNode.gain.value = document.getElementById("gain").value;
+        gainNode.gain.value = document.getElementById("my-gain").value;
         mediaStreamSource.connect(pannerNode);
         pannerNode.connect(gainNode);
         gainNode.connect(audioContext.destination);
@@ -139,13 +139,13 @@ function getUserList () {
 }
 
 function showValue () {
-    var gain = document.getElementById("gain").value;
+    var gain = document.getElementById("my-gain").value;
     document.getElementById("showRangeArea").innerHTML = gain;
     gainNode.gain.value = gain;
 }
 
 function showVector () {
-    var vector = - document.getElementById("panner").value;
+    var vector = - document.getElementById("my-panner").value;
     document.getElementById("showVectorArea").innerHTML = vector;
     audioContext.listener.setPosition(vector,0,1);
     // gainNode.gain.value = gain;

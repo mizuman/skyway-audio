@@ -40,8 +40,8 @@
                 <select id="contactlist" name="contact">
                 </select>
                 <a href="#" class="pure-button pure-button-success" id="make-call">Call</a>
-                <p>音量：<input type="range" id="gain" name="gain" min="0" max="2" step="0.01" onchange="showValue()"><span id="showRangeArea">1.0</span></p>
-                <p>方向：<input type="range" id="panner" name="panner" min="-1" max="1" step="0.01" onchange="showVector()"><span id="showVectorArea">0</span></p>
+                <p>音量：<input type="range" id="my-gain" name="gain" min="0" max="2" step="0.01" onchange="showValue()"><span id="showRangeArea">1.0</span></p>
+                <p>方向：<input type="range" id="my-panner" name="panner" min="-1" max="1" step="0.01" onchange="showVector()"><span id="showVectorArea">0</span></p>
 
             </div>
         </div>
@@ -50,7 +50,9 @@
         <div id="step3">
             <p>接続先：<span id="their-id">...</span></p>
             <p><a href="#" class="pure-button pure-button-error" id="end-call">チャットを終了する</a></p>
-            <!-- <p>音量：<input type="range" id="gain" name="gain" min="0" max="2" step="0.01" onchange="showValue()"><span id="showRangeArea">1.</span></p> -->
+            <a href="#" class="pure-button pure-button-success" id="make-call">Call</a>
+                <!-- <p>音量：<input type="range" id="their-gain" name="gain" min="0" max="2" step="0.01" onchange="showValue()"><span id="showRangeArea">1.0</span></p>
+                <p>方向：<input type="range" id="their-panner" name="panner" min="-1" max="1" step="0.01" onchange="showVector()"><span id="showVectorArea">0</span></p> -->
         </div>
     </div>
 </div>
