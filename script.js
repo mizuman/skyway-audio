@@ -18,6 +18,7 @@ navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia 
 // Audio contextを生成
 var audioContext = new webkitAudioContext();
 var gainNode = audioContext.createGainNode();
+var pannerNode = audioContext.createPanner();
 
 // PeerJSオブジェクトを生成
 var peer = new Peer({ key: APIKEY, debug: 3});
@@ -78,7 +79,8 @@ function step1 () {
         // 自分の音声のボリュームをコントロールする
         var mediaStreamSource = audioContext.createMediaStreamSource(stream);
         gainNode.gain.value = document.getElementById("gain").value;
-        mediaStreamSource.connect(gainNode);
+        mediaStreamSource.connect(pannerNode);
+        pannerNode.connect(gainNode);
         gainNode.connect(audioContext.destination);
 
         step2();
@@ -140,5 +142,12 @@ function showValue () {
     var gain = document.getElementById("gain").value;
     document.getElementById("showRangeArea").innerHTML = gain;
     gainNode.gain.value = gain;
+}
+
+function showVector () {
+    var vector = - document.getElementById("panner").value;
+    document.getElementById("showVectorArea").innerHTML = vector;
+    audioContext.listener.setPosition(vector,0,1);
+    // gainNode.gain.value = gain;
 }
 
