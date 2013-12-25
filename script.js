@@ -77,11 +77,11 @@ function step1 () {
         window.localStream = stream;
 
         // 自分の音声のボリュームをコントロールする
-        var mediaStreamSource = audioContext.createMediaStreamSource(stream);
-        gainNode.gain.value = document.getElementById("my-gain").value;
-        mediaStreamSource.connect(pannerNode);
-        pannerNode.connect(gainNode);
-        gainNode.connect(audioContext.destination);
+        // var mediaStreamSource = audioContext.createMediaStreamSource(stream);
+        // gainNode.gain.value = document.getElementById("my-gain").value;
+        // mediaStreamSource.connect(pannerNode);
+        // pannerNode.connect(gainNode);
+        // gainNode.connect(audioContext.destination);
 
         step2();
     }, function(){ $('#step1-error').show(); });
@@ -104,11 +104,12 @@ function step3 (call) {
         $('#their-video').prop('src', URL.createObjectURL(stream));
 
         // 相手の音声のボリュームをコントロールする
-        // var mediaStreamSource = audioContext.createMediaStreamSource(stream);
-        // gainNode.gain.value = document.getElementById("gain").value;
-        // mediaStreamSource.connect(gainNode);
+        var mediaStreamSource = audioContext.createMediaStreamSource(stream);
+        mediaStreamSource.connect(audioContext.destination);
+        // gainNode.gain.value = document.getElementById("my-gain").value;
+        // mediaStreamSource.connect(pannerNode);
+        // pannerNode.connect(gainNode);
         // gainNode.connect(audioContext.destination);
-        // mediaStreamSource.connect(audioContext.destination);
     });
 
     // 相手がクローズした場合
