@@ -13,6 +13,11 @@ var existingCall;
 
 // Compatibility
 navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+// window.AudioContext = window.AudioContext || window.webkitAudioContext;
+
+// Audio contextを生成
+var audioContext = new webkitAudioContext();
+var gainNode = audioContext.createGainNode();
 
 // PeerJSオブジェクトを生成
 var peer = new Peer({ key: APIKEY, debug: 3});
@@ -69,6 +74,13 @@ function step1 () {
     navigator.getUserMedia({audio: true, video: true}, function(stream){
         $('#my-video').prop('src', URL.createObjectURL(stream));
         window.localStream = stream;
+
+        // 自分の音声のボリュームをコントロールする
+        var mediaStreamSource = audioContext.createMediaStreamSource(stream);
+        gainNode.gain.value = document.getElementById("gain").value;
+        mediaStreamSource.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+
         step2();
     }, function(){ $('#step1-error').show(); });
 }
@@ -88,6 +100,13 @@ function step3 (call) {
     // 相手からのメディアストリームを待ち受ける
     call.on('stream', function(stream){
         $('#their-video').prop('src', URL.createObjectURL(stream));
+
+        // 相手の音声のボリュームをコントロールする
+        // var mediaStreamSource = audioContext.createMediaStreamSource(stream);
+        // gainNode.gain.value = document.getElementById("gain").value;
+        // mediaStreamSource.connect(gainNode);
+        // gainNode.connect(audioContext.destination);
+        // mediaStreamSource.connect(audioContext.destination);
     });
 
     // 相手がクローズした場合
@@ -115,5 +134,11 @@ function getUserList () {
             }
         }
     );
+}
+
+function showValue () {
+    var gain = document.getElementById("gain").value;
+    document.getElementById("showRangeArea").innerHTML = gain;
+    gainNode.gain.value = gain;
 }
 
