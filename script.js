@@ -145,9 +145,17 @@ function showValue () {
 }
 
 function showVector () {
-    var vector = - document.getElementById("my-panner").value;
+    var vector = document.getElementById("my-panner").value;
     document.getElementById("showVectorArea").innerHTML = vector;
-    audioContext.listener.setPosition(vector,0,1);
+    var pos = circleCoord(vector);
+    audioContext.listener.setPosition(pos.x,pos.y,0);
     // gainNode.gain.value = gain;
+}
+
+function circleCoord (rad) {
+    var coordinates = {x:0,y:0};
+    coordinates.x = Math.cos(rad * (Math.PI/180));
+    coordinates.y = Math.sin(rad * (Math.PI/180));
+    return coordinates;
 }
 
