@@ -12,13 +12,24 @@ var userList = [];
 var existingCall;
 
 // Compatibility
-navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-// window.AudioContext = window.AudioContext || window.webkitAudioContext;
+navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
+window.AudioContext = window.AudioContext || window.webkitAudioContext || window.mozAudioContext || window.msAudioContext;
 
 // Audio contextを生成
-var audioContext = new webkitAudioContext();
+var audioContext = new AudioContext();
 var gainNode = audioContext.createGainNode();
 var pannerNode = audioContext.createPanner();
+var analyserNode = audioContext.createAnalyser();
+var analyserNodeEffected = audioContext.createAnalyser();
+var peakingNode = audioContext.createBiquadFilter();
+
+var frequencyElement;
+var frequencyContext;
+var frequencyData;
+var frequencyDataEffected;
+
+// var frequencyContext = frequencyElement.getContext("2d");
 
 // PeerJSオブジェクトを生成
 var peer = new Peer({ key: APIKEY, debug: 3});
@@ -81,7 +92,32 @@ function step1 () {
         gainNode.gain.value = document.getElementById("my-gain").value;
         mediaStreamSource.connect(pannerNode);
         pannerNode.connect(gainNode);
-        gainNode.connect(audioContext.destination);
+        gainNode.connect(peakingNode);
+        peakingNode.connect(audioContext.destination);
+
+        // analyser frequency
+        frequencyElement = document.getElementById("frequency");
+        frequencyContext = frequencyElement.getContext("2d");
+
+        frequencyElement.width = 1023;
+        frequencyElement.height = 256;
+
+        frequencyData = new Uint8Array(analyserNode.frequencyBinCount);
+        frequencyDataEffected = new Uint8Array(analyserNodeEffected.frequencyBinCount);
+
+        mediaStreamSource.connect(analyserNode);
+
+        peakingNode.type = 5;
+        peakingNode.gain.value = -40;
+        // peakingNode.Q = 0.1;
+        peakingNode.frequency.value = 150;
+
+
+        mediaStreamSource.connect(peakingNode);
+        peakingNode.connect(analyserNodeEffected);
+
+
+        showAnalyser();
 
         step2();
     }, function(){ $('#step1-error').show(); });
@@ -136,6 +172,37 @@ function getUserList () {
             }
         }
     );
+}
+
+function showAnalyser () {
+    analyserNode.getByteFrequencyData(frequencyData);
+
+    // analyserNode.getByteFrequencyData(frequencyDataEffected);
+    analyserNodeEffected.getByteFrequencyData(frequencyDataEffected);
+            // console.log(frequencyData);
+
+
+    frequencyContext.clearRect(0,0,1023,256);
+    frequencyContext.strokeRect(0,0,1023,256);
+    frequencyContext.beginPath();
+    frequencyContext.strokeStyle = 'rgb(0,0,255)';
+    frequencyContext.moveTo(0, 256 - frequencyData[0]);
+    for (var i=1, l=frequencyData.length; i<l; i++){
+        frequencyContext.lineTo(i, 256 - frequencyData[i]);
+        if(frequencyData[i]>200) console.log("i" + i + "freq" + frequencyData[i]);
+    }
+    frequencyContext.stroke();
+
+    frequencyContext.beginPath();
+    frequencyContext.strokeStyle = 'rgb(255,0,0)';
+    frequencyContext.moveTo(0, 256 - frequencyData[0]);
+    for (var i=1, l=frequencyData.length; i<l; i++){
+        frequencyContext.lineTo(i, 256 - frequencyDataEffected[i]);
+        // frequencyContext.lineTo(i, 256 - frequencyDataEffected[i]);
+    }
+    frequencyContext.stroke();
+
+    requestAnimationFrame(showAnalyser);
 }
 
 function showValue () {
