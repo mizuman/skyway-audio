@@ -110,7 +110,7 @@ function step1 () {
         peakingNode.type = 5;
         peakingNode.gain.value = -40;
         // peakingNode.Q = 0.1;
-        peakingNode.frequency.value = 150;
+        peakingNode.frequency.value = 1000;
 
 
         mediaStreamSource.connect(peakingNode);
@@ -179,7 +179,6 @@ function showAnalyser () {
 
     // analyserNode.getByteFrequencyData(frequencyDataEffected);
     analyserNodeEffected.getByteFrequencyData(frequencyDataEffected);
-            // console.log(frequencyData);
 
 
     frequencyContext.clearRect(0,0,1023,256);
@@ -189,7 +188,7 @@ function showAnalyser () {
     frequencyContext.moveTo(0, 256 - frequencyData[0]);
     for (var i=1, l=frequencyData.length; i<l; i++){
         frequencyContext.lineTo(i, 256 - frequencyData[i]);
-        if(frequencyData[i]>200) console.log("i" + i + "freq" + frequencyData[i]);
+        if(frequencyData[i]>250) console.log(i);
     }
     frequencyContext.stroke();
 
@@ -216,7 +215,12 @@ function showVector () {
     document.getElementById("showVectorArea").innerHTML = vector;
     var pos = circleCoord(vector);
     audioContext.listener.setPosition(pos.x,pos.y,0);
-    // gainNode.gain.value = gain;
+}
+
+function showFreq () {
+    var frequency = document.getElementById("howl-freq").value;
+    document.getElementById("showFreqArea").innerHTML = frequency;
+    peakingNode.frequency.value = frequency;
 }
 
 function circleCoord (rad) {
